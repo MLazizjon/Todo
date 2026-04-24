@@ -1,34 +1,41 @@
 import { Route, Routes } from 'react-router-dom';
-import Home from "./pages/home/Home"
 // ? toast
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import './App.css';
-import Header from './components/header/Header';
+
+// Context Providerni import qilamiz
+import { TodoProvider } from './context/Provider'; 
+
+// import Header from './components/header/Header';
+import Login from "./pages/login/Login"
+import Home from "./pages/home/Home"
 
 function App() {
-  
   return (
-    
-    <div className="App">
-      <ToastContainer />
+    // Barcha route-lar TodoProvider ichida bo'lishi kerak
+    <TodoProvider>
+      <div className="App">
+        <ToastContainer 
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
 
-      <Header />
-     
-
-      
-       
-    
-
-    {/* ? router */}
-
-      <Routes>
-        <Route path='home' element={<Home />}/>
-
-      </Routes>
-   
-      
-    </div>
+        {/* <Header /> */}
+        
+        <Routes>
+          <Route path='/' element={<Login />}/>
+          <Route path='/home' element={<Home />}/>
+        </Routes>
+      </div>
+    </TodoProvider>
   );
 }
 
