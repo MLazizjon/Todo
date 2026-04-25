@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import * as S from './Home.styles';
-import { TodoContext } from '../../context/Provider'; // Yo'lni loyihangizga qarab tekshiring
-import { FiEdit, FiCheck, FiX, FiPlus } from 'react-icons/fi';
+import { TodoContext } from '../../context/Provider'; 
+import { FiEdit, FiCheck, FiX, FiPlus, FiTrash2 } from 'react-icons/fi';
 
 const Home = () => {
   // LocalStorage dan foydalanuvchi ismini olish
@@ -15,6 +15,8 @@ const Home = () => {
     addItemToSection,
     updateStatus,
     editItem,
+    deleteItem,    // Vazifani o'chirish funksiyasi
+    deleteSection, // Cardni o'chirish funksiyasi
     deleteAll
   } = useContext(TodoContext);
 
@@ -31,6 +33,14 @@ const Home = () => {
       {/* Har bir seksiya (Katta Card Box) uchun map */}
       {sections.map((section) => (
         <S.SectionBox key={section.id}>
+          {/* Card Sarlavhasi va Butun Cardni o'chirish tugmasi */}
+          <S.CardHeader>
+            <S.CardTitle>Vazifalar Bloki</S.CardTitle>
+            <S.DeleteCardBtn onClick={() => deleteSection(section.id)}>
+              <FiTrash2 size={16} /> Delete Card
+            </S.DeleteCardBtn>
+          </S.CardHeader>
+
           {/* Input qismi */}
           <S.InputSection>
             <S.StyledInput
@@ -39,25 +49,25 @@ const Home = () => {
               placeholder="Nima reja qildingiz?"
               onKeyPress={(e) => e.key === 'Enter' && addItemToSection(section.id)}
             />
-            <S.NewCardBtn onClick={() => addItemToSection(section.id)} style={{ padding: '0 30px' }}>
+            <S.EnterBtn onClick={() => addItemToSection(section.id)}>
               Enter
-            </S.NewCardBtn>
+            </S.EnterBtn>
           </S.InputSection>
 
-          {/* Seksiya ichidagi elementlar ro'yxati */}
+          {/* Seksiya ichidagi vazifalar ro'yxati */}
           <S.ListContainer>
             {section.items.map((item) => (
               <S.CardItem key={item.id}>
                 <S.CardContent>
-                  {/* Statusga qarab galochka yoki X chiqarish */}
+                  {/* Status belgilari (Check yoki X) */}
                   {item.status === 'checked' && (
-                    <FiCheck color="#28a745" size={20} strokeWidth={3} />
+                    <FiCheck color="#28a745" size={24} strokeWidth={3} />
                   )}
                   {item.status === 'crossed' && (
-                    <FiX color="#dc3545" size={20} strokeWidth={3} />
+                    <FiX color="#dc3545" size={24} strokeWidth={3} />
                   )}
 
-                  {/* Matn qismi */}
+                  {/* Vazifa matni */}
                   <span
                     className="item-text"
                     style={{
@@ -66,13 +76,13 @@ const Home = () => {
                       opacity: item.status === 'checked' ? 0.6 : 1,
                       fontSize: '18px',
                       fontWeight: '500',
-                      marginLeft: (item.status === 'none') ? '0px' : '5px'
+                      marginLeft: (item.status === 'none') ? '0px' : '8px'
                     }}
                   >
                     {item.text}
                   </span>
 
-                  {/* Faqat Sana (Kun.Oy.Yil) */}
+                  {/* Sana belgisi */}
                   <S.TimeText>📅 {item.time}</S.TimeText>
                 </S.CardContent>
 
@@ -81,17 +91,23 @@ const Home = () => {
                   <FiCheck
                     title="Bajarildi"
                     onClick={() => updateStatus(section.id, item.id, 'checked')}
-                    color="#28a745" size={35}
+                    style={{ color: '#28a745', fontSize: '28px' }}
                   />
                   <FiX
-                    title="Xatolik/Bekor qilish"
+                    title="Xatolik"
                     onClick={() => updateStatus(section.id, item.id, 'crossed')}
-                    color="#dc3545" size={35}
+                    style={{ color: '#dc3545', fontSize: '28px' }}
                   />
                   <FiEdit
                     title="Tahrirlash"
                     onClick={() => editItem(section.id, item.id)}
-                    color="#0066ff" size={35}
+                    style={{ color: '#0066ff', fontSize: '28px' }}
+                  />
+                  {/* Individual vazifani o'chirish tugmasi */}
+                  <FiTrash2
+                    title="Vazifani o'chirish"
+                    onClick={() => deleteItem(section.id, item.id)}
+                    style={{ color: '#ff3333', fontSize: '28px' }}
                   />
                 </S.CheckboxGroup>
               </S.CardItem>
@@ -100,7 +116,7 @@ const Home = () => {
         </S.SectionBox>
       ))}
 
-      {/* Agar seksiyalar bo'lsa, hammasini o'chirish tugmasi */}
+      {/* Agar kartalar bo'lsa, hammasini o'chirish tugmasi */}
       {sections.length > 0 && (
         <S.FooterAction>
           <S.DeleteAllBtn onClick={deleteAll}>
